@@ -53,9 +53,16 @@ const AssessmentResult = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans p-4 pt-24 md:p-12 md:pt-32">
+    <div className="min-h-screen bg-background text-foreground font-sans p-4 pt-24 md:p-12 md:pt-32 relative">
+      {/* Executive Bento Grid Mesh Background */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10 bg-cover bg-center bg-no-repeat opacity-20 dark:opacity-25 transition-opacity duration-700"
+        style={{ backgroundImage: `url('/backgrounds/dashboard-bento-mesh.jpg')` }}
+      />
+      <div className="fixed inset-0 pointer-events-none -z-10 bg-gradient-to-b from-background/75 via-background/90 to-background" />
+
       <SEO title="Assessment Results" />
-      <div className="max-w-5xl mx-auto space-y-8">
+      <div className="max-w-5xl mx-auto space-y-8 relative z-10">
         
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>

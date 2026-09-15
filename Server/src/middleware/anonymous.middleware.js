@@ -18,7 +18,7 @@ async function anonymousUser(req, res, next) {
             res.cookie("anonymousId", sessionId, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
-                sameSite: "none",
+                sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
                 maxAge: 365 * 24 * 60 * 60 * 1000 // 1 year
             });
         }

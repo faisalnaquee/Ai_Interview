@@ -1,5 +1,5 @@
 const extractResumeText = require("../services/resume")
-const extractGitHubRepo = require("../services/github")
+const { extractGitHubRepo } = require("../services/github")
 const { parseResume } = require("../services/ai_service");
 const { normalizeCandidateProfile } = require("../services/profile.service")
 const resumeModel = require("../model/resume.model")

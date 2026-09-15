@@ -296,14 +296,21 @@ const Interview = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Immersive Cyber-Acoustic Studio Background */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10 bg-cover bg-center bg-no-repeat transition-opacity duration-700"
+        style={{ backgroundImage: `url('/backgrounds/interview-studio-dark.jpg')` }}
+      />
+      <div className="fixed inset-0 pointer-events-none -z-10 bg-background/80 backdrop-blur-[2px]" />
+
       <SEO title="Interview in Progress" noindex />
       {/* Immersive Central Card */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-3xl rounded-[2rem] border border-border bg-card shadow-2xl overflow-hidden relative"
+        className="w-full max-w-3xl rounded-[2rem] border border-border/70 bg-card/90 backdrop-blur-xl shadow-2xl overflow-hidden relative"
       >
         <div className="absolute top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 z-10">
           <div className="flex items-center gap-3 bg-background/50 backdrop-blur-md px-4 py-2 rounded-full border border-border w-full sm:w-auto justify-center sm:justify-start">

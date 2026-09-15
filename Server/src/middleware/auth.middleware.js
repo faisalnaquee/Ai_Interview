@@ -1,7 +1,12 @@
 const { getAuth } = require('@clerk/express');
 
-const requireAuth = () => {
+const requireAuth = ({ allowInternal = false } = {}) => {
   return (req, res, next) => {
+    // If internal service call is explicitly permitted and present, bypass Clerk auth
+    if (allowInternal && req.headers['x-internal-call'] === 'true') {
+      return next();
+    }
+
     try {
       const auth = getAuth(req);
       if (!auth?.userId) {

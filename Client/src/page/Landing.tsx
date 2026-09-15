@@ -24,9 +24,16 @@ export default function Landing() {
   }, [hash]);
   
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground overflow-x-hidden font-sans relative">
+      {/* Themed Editorial Background */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10 bg-cover bg-center bg-no-repeat opacity-25 dark:opacity-10 transition-opacity duration-500"
+        style={{ backgroundImage: `url('/backgrounds/landing-editorial-warm.jpg')` }}
+      />
+      <div className="fixed inset-0 pointer-events-none -z-10 bg-gradient-to-b from-background/60 via-background/85 to-background" />
+
       <SEO canonical="/" />
-      <main className="pt-28 pb-12">
+      <main className="pt-28 pb-12 relative z-10">
         {/* HERO */}
         <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center space-y-5 pt-8">
           

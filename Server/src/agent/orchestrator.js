@@ -157,11 +157,15 @@ async function runAssessment({
     _transitionStage(state, STAGE.PREREQUISITES); // internal stage tracker
   }
 
-  // Mark running in MongoDB immediately
+  // Mark active status in MongoDB immediately
+  const activeStatus = state._stage === STAGE.EVALUATE_AND_REPORT ? "evaluating" : "running";
   await Assessment.findByIdAndUpdate(assessmentId, {
-    $set: { status: "running", startedAt: new Date() },
+    $set: {
+      status: activeStatus,
+      ...(state._stage === STAGE.PREREQUISITES ? { startedAt: new Date() } : {})
+    },
   });
-  state.status = "running";
+  state.status = activeStatus;
 
   try {
     // ── Stage machine ──────────────────────────────────────────────────────────

@@ -30,29 +30,36 @@ const AssessmentProgress = () => {
     const status = assessment.status;
     const stage = assessment.agentState?._stage;
     const toolHistory = assessment.agentState?.agent?.toolCallHistory || [];
+    const hasTool = (name: string) => toolHistory.some((t: any) => t.tool === name);
 
-    // Derive current stage from backend state
+    // Derive current stage from backend state across all 8 stages
     let idx = 0;
-    if (status === 'initializing') {
-      idx = 0; // Analyzing resume / Understanding job
-    } else if (stage === 'INVESTIGATE') {
-      if (toolHistory.some((t: any) => t.tool === 'gap_analysis')) {
-        idx = 3; // Identifying skill gaps
-      } else {
-        idx = 2; // Investigating evidence
-      }
-    } else if (stage === 'PREPARE_INTERVIEW') {
-      idx = 4; // Preparing verification interview
-    } else if (stage === 'AWAITING_INTERVIEW') {
-      idx = 5; // Verification interview
-    } else if (stage === 'EVALUATE_AND_REPORT') {
-      if (toolHistory.some((t: any) => t.tool === 'generate_reports')) {
+    if (status === 'completed' || stage === 'COMPLETED') {
+      idx = 8;
+    } else if (stage === 'EVALUATE_AND_REPORT' || status === 'evaluating') {
+      if (hasTool('generate_reports') || hasTool('batch_evaluation')) {
         idx = 7; // Generating report
       } else {
         idx = 6; // Evaluating results
       }
-    } else if (stage === 'COMPLETED' || status === 'completed') {
-      idx = 8;
+    } else if (stage === 'AWAITING_INTERVIEW' || status === 'awaiting_interview') {
+      idx = 5; // Verification interview
+    } else if (stage === 'PREPARE_INTERVIEW') {
+      idx = 4; // Preparing verification interview
+    } else if (stage === 'INVESTIGATE') {
+      if (hasTool('identify_gaps') || hasTool('gap_analysis')) {
+        idx = 3; // Identifying skill gaps
+      } else {
+        idx = 2; // Investigating evidence
+      }
+    } else if (stage === 'PREREQUISITES' || status === 'running' || status === 'initializing' || status === 'initialized') {
+      if (hasTool('parse_job')) {
+        idx = 2; // Job parsed, moving to evidence investigation
+      } else if (hasTool('parse_resume') || assessment.agentState?.resume?.parsed || assessment.resumeId) {
+        idx = 1; // Resume parsed, now understanding job
+      } else {
+        idx = 0; // Analyzing resume
+      }
     }
 
     setCurrentStageIdx(idx);
@@ -98,9 +105,16 @@ const AssessmentProgress = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background text-foreground font-sans flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Neural Agent HUD Background */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10 bg-cover bg-center bg-no-repeat transition-opacity duration-700"
+        style={{ backgroundImage: `url('/backgrounds/agent-network-hud.jpg')` }}
+      />
+      <div className="fixed inset-0 pointer-events-none -z-10 bg-background/85 backdrop-blur-[2px]" />
+
       <SEO title="Assessment Progress" />
-      <Card className="w-full max-w-lg shadow-xl border-border">
+      <Card className="w-full max-w-lg shadow-2xl border-border/70 bg-card/90 backdrop-blur-xl">
         <CardHeader className="text-center pb-8">
           <CardTitle className="text-2xl font-bold">Processing Assessment</CardTitle>
           <p className="text-muted-foreground mt-2">The AI is evaluating your profile against the role requirements.</p>
@@ -136,7 +150,13 @@ const AssessmentProgress = () => {
           
           <div className="mt-8 text-center">
             {currentStageIdx === 5 && (
-              <p className="text-sm font-medium text-primary animate-pulse">Redirecting to interview...</p>
+              <p className="text-sm font-medium text-primary animate-pulse">Redirecting to verification interview...</p>
+            )}
+            {currentStageIdx >= 6 && currentStageIdx < 8 && (
+              <p className="text-sm font-medium text-primary animate-pulse">Synthesizing interview answers & generating final reports...</p>
+            )}
+            {currentStageIdx >= 8 && (
+              <p className="text-sm font-medium text-green-500 animate-pulse">Assessment complete! Opening results...</p>
             )}
           </div>
         </CardContent>

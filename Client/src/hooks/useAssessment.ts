@@ -37,14 +37,13 @@ export const useAssessmentStatus = (assessmentId: string | undefined) => {
       return res.assessment;
     },
     enabled: !!assessmentId,
-    // Poll every 3 seconds while processing
+    // Poll every 2.5 seconds while active, stop only on terminal states
     refetchInterval: (query) => {
       const status = query.state?.data?.status;
-      if (!status) return 3000;
-      if (status === 'awaiting_interview' || status === 'completed' || status === 'error') {
-        return false; // Stop polling
+      if (status === 'completed' || status === 'error') {
+        return false; // Terminal states
       }
-      return 3000;
+      return 2500;
     },
   });
 };
