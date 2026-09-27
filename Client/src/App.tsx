@@ -6,19 +6,13 @@ import AtsChecker from "@/page/AtsChecker";
 import Dashboard from "@/page/Dashboard";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
-import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
+import { AuthProvider, SignedIn, SignedOut, RedirectToSignIn } from "@/lib/auth-provider";
 import { AnimatePresence, motion } from "framer-motion";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import GlobalNavbar from "@/components/layout/GlobalNavbar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/context/ThemeContext";
 import React from "react";
-
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key. Please set VITE_CLERK_PUBLISHABLE_KEY in your .env file.");
-}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -138,7 +132,7 @@ const App = () => {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+        <AuthProvider>
           <BrowserRouter>
             {showLoader && <InitialLoader onComplete={() => setShowLoader(false)} />}
             <div className={`transition-opacity duration-700 ${showLoader ? 'opacity-0' : 'opacity-100'}`}>
@@ -147,7 +141,7 @@ const App = () => {
               <Toaster position="top-right" />
             </div>
           </BrowserRouter>
-        </ClerkProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

@@ -57,7 +57,14 @@ const {
 } = require("./state");
 
 // ── LLM client ─────────────────────────────────────────────────────────────────
-const groq = new Groq({ apiKey: process.env.GROK_API_KEY });
+let groq = null;
+if (process.env.GROK_API_KEY) {
+  try {
+    groq = new Groq({ apiKey: process.env.GROK_API_KEY });
+  } catch (e) {
+    console.warn("[Orchestrator] Groq init warning:", e.message);
+  }
+}
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 const DEFAULT_MAX_STEPS   = 15;   // absolute ceiling for the entire run
@@ -443,6 +450,9 @@ DECISION RULES:
 You must call exactly one tool: either inspect_github_repo or finish_investigation.`;
 
   try {
+    if (!groq) {
+      return null;
+    }
     const response = await groq.chat.completions.create({
       model: LLM_MODEL,
       messages: [{ role: "system", content: systemPrompt }],

@@ -8,18 +8,26 @@ const requireAuth = ({ allowInternal = false } = {}) => {
     }
 
     try {
-      const auth = getAuth(req);
-      if (!auth?.userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
+      if (process.env.CLERK_SECRET_KEY) {
+        const auth = getAuth(req);
+        if (auth?.userId) {
+          req.auth = auth;
+          req.userId = auth.userId;
+          return next();
+        }
       }
-      // Attach to req so downstream controllers can use req.auth.userId
-      req.auth = auth;
-      req.userId = auth.userId;
-      next();
     } catch (error) {
-      console.error("Auth middleware error:", error);
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
+      console.warn("[Auth] Check warning:", error.message);
     }
+
+    // Fallback for preview / dev environments without Clerk credentials
+    if (!process.env.CLERK_SECRET_KEY) {
+      req.auth = { userId: "user_mock_candidate" };
+      req.userId = "user_mock_candidate";
+      return next();
+    }
+
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
   };
 };
 

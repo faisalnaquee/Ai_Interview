@@ -1,0 +1,11 @@
+{
+  "name": "MockHire",
+  "description": "AI Mock Interview & ATS Resume Analyzer platform for software engineering and product management job preparation.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

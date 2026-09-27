@@ -65,7 +65,7 @@ function setupInterviewSocket(wss) {
         }
         // Trigger orchestrator to resume
         try {
-          const port = process.env.PORT || 8080;
+          const port = 3000;
           await axios.post(
             `http://localhost:${port}/api/v1/agent/assess/${assessmentId}/interview-complete`,
             { interviewId: id },

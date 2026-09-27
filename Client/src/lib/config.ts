@@ -1,5 +1,9 @@
+// Dynamic backend and WebSocket URL resolution for AI Studio dev & prod
+const isBrowser = typeof window !== 'undefined';
+const protocol = isBrowser && window.location.protocol === 'https:' ? 'https:' : 'http:';
+const wsProtocol = isBrowser && window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const host = isBrowser ? window.location.host : 'localhost:3000';
 
-// ✅ Fixed: use env vars so local dev and production both work without code changes
-const rawBackendUrl = import.meta.env.VITE_BACKEND_URL || (import.meta.env.DEV ? "http://localhost:8080" : "https://ai-interview-379c.onrender.com");
+const rawBackendUrl = import.meta.env.VITE_BACKEND_URL || (isBrowser ? `${protocol}//${host}` : "http://localhost:3000");
 export const BACKEND_URL = rawBackendUrl.replace("wss://", "https://").replace("ws://", "http://");
-export const WS_URL = import.meta.env.VITE_WS_URL || (import.meta.env.DEV ? "ws://localhost:8080" : "wss://ai-interview-379c.onrender.com");
+export const WS_URL = import.meta.env.VITE_WS_URL || (isBrowser ? `${wsProtocol}//${host}` : "ws://localhost:3000");
